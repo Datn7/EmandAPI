@@ -9,6 +9,7 @@ namespace EmandAPI.Helpers
         public MappingProfile()
         {
             CreateMap<RegisterDTO, User>();
+            CreateMap<User, ProfileDto>();
         }
     }
 }
