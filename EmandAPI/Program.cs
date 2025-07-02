@@ -1,14 +1,15 @@
-using Microsoft.EntityFrameworkCore;
-using EmandAPI.Data;
-using EmandAPI.Models.Entities;
-using Microsoft.AspNetCore.Identity;
 using AutoMapper;
+using EmandAPI.Data;
 using EmandAPI.Helpers;
-using FluentValidation;
 using EmandAPI.Models.DTOs;
+using EmandAPI.Models.Entities;
 using EmandAPI.Validators;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,6 +34,10 @@ builder.Services.AddSingleton(mapper);
 
 // FluentValidation
 builder.Services.AddScoped<IValidator<RegisterDTO>, RegisterDTOValidator>();
+
+
+// Clear default claim type mapping to use JWT claims as-is
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 // JWT Authentication
 builder.Services.AddAuthentication(options =>

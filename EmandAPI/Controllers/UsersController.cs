@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EmandAPI.Data;
+using EmandAPI.Models.DTOs;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace EmandAPI.Controllers
 {
@@ -7,10 +12,14 @@ namespace EmandAPI.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IWebHostEnvironment _env;
+        private readonly ApplicationDbContext _context;
+        private readonly ILogger<UsersController> _logger;
 
-        public UsersController(IWebHostEnvironment env)
+        public UsersController(IWebHostEnvironment env, ApplicationDbContext context, ILogger<UsersController> logger)
         {
             _env = env;
+            this._context = context;
+            this._logger = logger;
         }
 
         [HttpPost("upload-profile-picture")]
@@ -42,5 +51,40 @@ namespace EmandAPI.Controllers
 
             return Ok(new { url = fileUrl });
         }
+
+        [Authorize]
+        [HttpGet("me")]
+        public async Task<ActionResult<ProfileDto>> GetMyProfile()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                _logger.LogWarning("User ID from claims is null");
+                return Unauthorized();
+            }
+            _logger.LogInformation($"User ID from claims: {userId}");
+
+            var user = await _context.Users
+                .Where(u => u.Id == userId)
+                .Select(u => new ProfileDto
+                {
+                    Id = u.Id,
+                    Email = u.Email,
+                    FullName = u.FullName,
+                    DateOfBirth = u.DateOfBirth,
+                    Gender = u.Gender,
+                    Address = u.Address,
+                    ProfilePictureUrl = u.ProfilePictureUrl,
+                    Latitude = u.Latitude,
+                    Longitude = u.Longitude
+                })
+                .FirstOrDefaultAsync();
+
+            if (user == null)
+                return NotFound();
+
+            return Ok(user);
+        }
+
     }
 }
