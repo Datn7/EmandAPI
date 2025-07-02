@@ -8,6 +8,7 @@ using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using FluentValidation;
+using Claim = System.Security.Claims.Claim;
 
 namespace EmandAPI.Controllers
 {
@@ -44,7 +45,20 @@ namespace EmandAPI.Controllers
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
-            return Ok("User registered successfully.");
+            return Ok(new
+            {
+                message = "User registered successfully",
+                user = new
+                {
+                    user.Id,
+                    user.FullName,
+                    user.Email,
+                    user.Address,
+                    user.ProfilePictureUrl,
+                    user.Latitude,
+                    user.Longitude
+                }
+            });
         }
 
         [HttpPost("login")]
@@ -58,7 +72,8 @@ namespace EmandAPI.Controllers
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim("FullName", user.FullName ?? "")
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));

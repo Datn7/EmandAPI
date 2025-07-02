@@ -9,5 +9,9 @@
 
         public string Email { get; set; }
         public string Password { get; set; }
+
+        public string ProfilePictureUrl { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
     }
 }
