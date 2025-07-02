@@ -1,6 +1,0 @@
-@EmandAPI_HostAddress = http://localhost:5063
-
-GET {{EmandAPI_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
