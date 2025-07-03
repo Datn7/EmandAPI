@@ -34,6 +34,8 @@ builder.Services.AddSingleton(mapper);
 
 // FluentValidation
 builder.Services.AddScoped<IValidator<RegisterDTO>, RegisterDTOValidator>();
+builder.Services.AddScoped<IValidator<PolicyDTO>, PolicyDTOValidator>();
+builder.Services.AddScoped<IValidator<ClaimDTO>, ClaimDTOValidator>();
 
 
 // Clear default claim type mapping to use JWT claims as-is

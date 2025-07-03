@@ -15,6 +15,8 @@ namespace EmandAPI.Helpers
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
             .ForMember(dest => dest.SubmittedAt, opt => opt.MapFrom(src => src.SubmittedAt))
             .ReverseMap();
+
+            CreateMap<Policy, PolicyDTO>().ReverseMap();
         }
     }
 }
