@@ -5,6 +5,7 @@ using EmandAPI.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace Emand_Medical_Insurance.Controllers
 {
@@ -22,9 +23,13 @@ namespace Emand_Medical_Insurance.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetUserPolicies(string userId)
+        [HttpGet("user")]
+        [Authorize]
+        public async Task<IActionResult> GetUserPolicies()
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return Unauthorized();
+
             var policies = await _context.Policies
                 .Where(p => p.UserId == userId)
                 .ToListAsync();
@@ -32,6 +37,8 @@ namespace Emand_Medical_Insurance.Controllers
             var policyDtos = _mapper.Map<List<PolicyDTO>>(policies);
             return Ok(policyDtos);
         }
+
+
 
         [HttpPost]
         public async Task<IActionResult> CreatePolicy([FromBody] PolicyDTO policyDto)
