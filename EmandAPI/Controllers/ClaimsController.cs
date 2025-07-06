@@ -24,7 +24,7 @@ namespace EmandAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SubmitClaim([FromBody] ClaimDTO claimDto)
+        public async Task<IActionResult> SubmitClaim([FromBody] CreateClaimDTO claimDto)
         {
             if (!ModelState.IsValid)
             {
