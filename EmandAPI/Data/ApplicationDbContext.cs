@@ -11,5 +11,6 @@ namespace EmandAPI.Data
         public DbSet<Policy> Policies { get; set; }
         public DbSet<Claim> Claims { get; set; }
         public DbSet<Provider> Providers { get; set; }
+        public DbSet<HealthArticle> HealthArticles { get; set; }
     }
 }
